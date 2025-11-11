@@ -12,12 +12,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main); // 绑定 XML
+        setContentView(R.layout.activity_main);
 
         valueText = findViewById(R.id.valueText);
         circularSlider = findViewById(R.id.circularSlider);
 
-        // 设置监听器
+        // 实时监听滑块变化
         circularSlider.setOnValueChangeListener(new CircularSlider.OnValueChangeListener() {
             @Override
             public void onValueChanged(float newValue) {
