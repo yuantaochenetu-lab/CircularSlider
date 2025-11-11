@@ -22,7 +22,7 @@ public class CircularSlider extends View {
     private boolean isDragging = false;
     private boolean isFirstTouch = true;
 
-    // ---- 可配置参数 ----
+    // ---- Paramètres configurables ----
     private float outerRingWidth = 18f;
     private float trackWidth = 100f;
     private float innerCircleRatio = 0.4f;
@@ -33,7 +33,7 @@ public class CircularSlider extends View {
     private int textColor = Color.parseColor("#4A148C");
     private float defaultValue = 0f;
 
-    // ---- 画笔 ----
+    // ---- Pinceaux ----
     private Paint outerRingPaint;
     private Paint trackBackgroundPaint;
     private Paint progressPaint;
@@ -48,7 +48,7 @@ public class CircularSlider extends View {
 
     private OnValueChangeListener listener;
 
-    // ---- 构造函数 ----
+    // ---- Constructeurs ----
     public CircularSlider(Context context) {
         super(context);
         init(context, null);
@@ -64,10 +64,10 @@ public class CircularSlider extends View {
         init(context, attrs);
     }
 
-    // ---- 初始化 ----
+    // ---- Initialisation ----
     private void init(Context context, @Nullable AttributeSet attrs) {
 
-        // ① 读取自定义属性
+        // ① Lecture des attributs personnalisés
         if (attrs != null) {
             TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.CircularSlider);
 
@@ -86,7 +86,7 @@ public class CircularSlider extends View {
 
         currentValue = defaultValue;
 
-        // ② 初始化画笔
+        // ② Initialisation des pinceaux
         outerRingPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         outerRingPaint.setStyle(Paint.Style.STROKE);
         outerRingPaint.setStrokeWidth(outerRingWidth);
@@ -126,7 +126,7 @@ public class CircularSlider extends View {
         outerRingBounds = new RectF();
         trackBounds = new RectF();
 
-        // 双击归零
+        // Double tape pour réinitialiser à zéro
         gestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
             @Override
             public boolean onDoubleTap(MotionEvent e) {
@@ -138,7 +138,7 @@ public class CircularSlider extends View {
         });
     }
 
-    // ---- 测量 ----
+    // ---- Mesure ----
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int widthSize = MeasureSpec.getSize(widthMeasureSpec);
@@ -146,7 +146,7 @@ public class CircularSlider extends View {
         int size = Math.min(widthSize, heightSize);
 
         float density = getResources().getDisplayMetrics().density;
-        float minTrackRadiusPx = 0.25f * density * 160; // 0.25英寸最小轨道半径
+        float minTrackRadiusPx = 0.25f * density * 160; // Rayon minimal de la piste : 0,25 pouce
         float minViewSize = (minTrackRadiusPx + trackWidth / 2f + outerRingWidth + 20) * 2;
 
         if (size < minViewSize) size = (int) Math.ceil(minViewSize);
@@ -154,7 +154,7 @@ public class CircularSlider extends View {
         setMeasuredDimension(size, size);
     }
 
-    // ---- 绘制 ----
+    // ---- Dessin ----
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
@@ -167,19 +167,19 @@ public class CircularSlider extends View {
         float trackRadius = outerRingRadius - outerRingWidth / 2f - trackWidth / 2f;
         float innerRadius = trackRadius - trackWidth * innerCircleRatio;
 
-        // 外环
+        // Anneau extérieur
         outerRingBounds.set(cx - outerRingRadius, cy - outerRingRadius, cx + outerRingRadius, cy + outerRingRadius);
         canvas.drawArc(outerRingBounds, 0, 360, false, outerRingPaint);
 
-        // 轨道
+        // Piste
         trackBounds.set(cx - trackRadius, cy - trackRadius, cx + trackRadius, cy + trackRadius);
         canvas.drawArc(trackBounds, 0, 360, false, trackBackgroundPaint);
 
-        // 进度
+        // Progression
         float sweepAngle = (currentValue / 100f) * 360f;
         if (sweepAngle > 0) canvas.drawArc(trackBounds, -90, sweepAngle, false, progressPaint);
 
-        // 刻度
+        // Graduations
         for (int i = 0; i < 16; i++) {
             float angle = (float) Math.toRadians(i * 22.5f - 90);
             boolean isLong = (i % 2 == 0);
@@ -196,17 +196,17 @@ public class CircularSlider extends View {
             canvas.drawLine(x1, y1, x2, y2, tickPaint);
         }
 
-        // 内圆
+        // Cercle intérieur
         canvas.drawCircle(cx, cy, innerRadius, innerCirclePaint);
 
-        // 文本
+        // Texte
         String text = String.format("%.0f%%", currentValue);
         Paint.FontMetrics fm = textPaint.getFontMetrics();
         float textY = cy - (fm.ascent + fm.descent) / 2;
         canvas.drawText(text, cx, textY, textPaint);
     }
 
-    // ---- 触摸事件 ----
+    // ---- Événements tactiles ----
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         boolean isDoubleTap = gestureDetector.onTouchEvent(event);
@@ -240,7 +240,7 @@ public class CircularSlider extends View {
         return true;
     }
 
-    // ---- 更新值 ----
+    // ---- Mise à jour de la valeur ----
     private void updateValueWithDelta(float currentAngle) {
         float delta = currentAngle - lastAngle;
         if (delta > 180) delta -= 360;
@@ -256,7 +256,7 @@ public class CircularSlider extends View {
         }
     }
 
-    // ---- 状态保存与恢复 ----
+    // ---- Sauvegarde et restauration de l’état ----
     @Override
     protected Parcelable onSaveInstanceState() {
         Parcelable superState = super.onSaveInstanceState();
@@ -307,7 +307,7 @@ public class CircularSlider extends View {
                 };
     }
 
-    // ---- 监听接口 ----
+    // ---- Interface d’écoute ----
     public interface OnValueChangeListener {
         void onValueChanged(float newValue);
     }

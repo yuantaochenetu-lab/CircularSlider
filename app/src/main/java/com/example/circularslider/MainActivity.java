@@ -17,7 +17,7 @@ public class MainActivity extends AppCompatActivity {
         valueText = findViewById(R.id.valueText);
         circularSlider = findViewById(R.id.circularSlider);
 
-        // 实时监听滑块变化
+        // Écoute en temps réel des changements du curseur
         circularSlider.setOnValueChangeListener(new CircularSlider.OnValueChangeListener() {
             @Override
             public void onValueChanged(float newValue) {
