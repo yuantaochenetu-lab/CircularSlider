@@ -6,23 +6,22 @@ import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
 
-    private CircularSlider circularSlider;
     private TextView valueText;
+    private CircularSlider circularSlider;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main); // 绑定 XML
 
-        circularSlider = findViewById(R.id.myCircularSlider);
         valueText = findViewById(R.id.valueText);
+        circularSlider = findViewById(R.id.circularSlider);
 
-        valueText.setText("Valeur : 0%");
-
+        // 设置监听器
         circularSlider.setOnValueChangeListener(new CircularSlider.OnValueChangeListener() {
             @Override
             public void onValueChanged(float newValue) {
-                valueText.setText(String.format("Valeur : %.0f%%", newValue));
+                valueText.setText("Valeur : " + Math.round(newValue) + "%");
             }
         });
     }

@@ -1,33 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity"
+    android:orientation="vertical"
+    android:gravity="center"
     android:background="#FFFFFF">
 
+    <!-- 顶部显示当前值 -->
     <TextView
         android:id="@+id/valueText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Valeur : 0%"
-        android:textSize="22sp"
-        android:textColor="#333333"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="50dp"/>
+        android:textColor="#1A237E"
+        android:textStyle="bold"
+        android:textSize="24sp"
+        android:layout_marginBottom="20dp"/>
 
+    <!-- 自定义圆形滑块 -->
     <com.example.circularslider.CircularSlider
-        android:id="@+id/myCircularSlider"
-        android:layout_width="300dp"
-        android:layout_height="300dp"
-        app:layout_constraintTop_toBottomOf="@id/valueText"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginTop="30dp" />
+        android:id="@+id/circularSlider"
+        android:layout_width="320dp"
+        android:layout_height="320dp" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>
