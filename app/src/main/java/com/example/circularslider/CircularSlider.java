@@ -6,6 +6,8 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -252,6 +254,57 @@ public class CircularSlider extends View {
             invalidate();
             if (listener != null) listener.onValueChanged(currentValue);
         }
+    }
+
+    // ---- 状态保存与恢复 ----
+    @Override
+    protected Parcelable onSaveInstanceState() {
+        Parcelable superState = super.onSaveInstanceState();
+        return new SavedState(superState, currentValue);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Parcelable state) {
+        if (state instanceof SavedState) {
+            SavedState ss = (SavedState) state;
+            super.onRestoreInstanceState(ss.getSuperState());
+            this.currentValue = ss.currentValue;
+            invalidate();
+            if (listener != null) listener.onValueChanged(currentValue);
+        } else {
+            super.onRestoreInstanceState(state);
+        }
+    }
+
+    private static class SavedState extends BaseSavedState {
+        float currentValue;
+
+        SavedState(Parcelable superState, float currentValue) {
+            super(superState);
+            this.currentValue = currentValue;
+        }
+
+        private SavedState(Parcel in) {
+            super(in);
+            this.currentValue = in.readFloat();
+        }
+
+        @Override
+        public void writeToParcel(Parcel out, int flags) {
+            super.writeToParcel(out, flags);
+            out.writeFloat(currentValue);
+        }
+
+        public static final Parcelable.Creator<SavedState> CREATOR =
+                new Parcelable.Creator<SavedState>() {
+                    public SavedState createFromParcel(Parcel in) {
+                        return new SavedState(in);
+                    }
+
+                    public SavedState[] newArray(int size) {
+                        return new SavedState[size];
+                    }
+                };
     }
 
     // ---- 监听接口 ----

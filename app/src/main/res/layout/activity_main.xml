@@ -17,14 +17,14 @@
         app:progressColor="#C2185B"
         app:innerCircleColor="#FFE082"
         app:textColor="#4A148C"
-        app:defaultValue="35"
+        app:defaultValue="0"
         app:innerCircleRatio="0.10"/>
 
     <TextView
         android:id="@+id/valueText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Valeur : 35%"
+        android:text="Valeur : 0%"
         android:textColor="#1A237E"
         android:textStyle="bold"
         android:textSize="24sp"
