@@ -19,19 +19,21 @@ public class CircularSlider extends View {
     private boolean isDragging = false;
     private boolean isFirstTouch = true;
 
-    // 三个同心圆
-    private Paint outerCirclePaint;     // 外圆（浅紫色）
-    private Paint trackBackgroundPaint; // 中间轨道背景（淡蓝色）
-    private Paint progressPaint;        // 深色弧线（红色）
-    private Paint innerCirclePaint;     // 内圆（橙色）
+    // 三层同心圆
+    private Paint outerRingPaint;       // 最外层圆环（浅灰色）
+    private Paint trackBackgroundPaint; // 可滑动轨道背景（亮粉红）
+    private Paint progressPaint;        // 进度弧线（深紫红）
+    private Paint innerCirclePaint;     // 内圆（橙黄色）
     private Paint longTickPaint;        // 长刻度线
     private Paint shortTickPaint;       // 短刻度线
     private Paint textPaint;            // 中心文字
 
+    private RectF outerRingBounds;
     private RectF trackBounds;
     private GestureDetector gestureDetector;
 
-    private float trackWidth = 60f;     // 调节轨道宽度
+    private float outerRingWidth = 18f; // 外环宽度
+    private float trackWidth = 100f;    // 轨道宽度（大幅增加，延伸到内圆）
 
     public CircularSlider(Context context) {
         super(context);
@@ -49,46 +51,50 @@ public class CircularSlider extends View {
     }
 
     private void init(Context context) {
-        // 外圆 - 浅紫
-        outerCirclePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        outerCirclePaint.setStyle(Paint.Style.FILL);
-        outerCirclePaint.setColor(Color.parseColor("#E1BEE7"));
+        // 最外层圆环 - 浅灰色
+        outerRingPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        outerRingPaint.setStyle(Paint.Style.STROKE);
+        outerRingPaint.setStrokeWidth(outerRingWidth);
+        outerRingPaint.setColor(Color.parseColor("#E0E0E0"));
 
-        // 调节轨道背景 - 淡蓝
+        // 轨道背景 - 亮粉红色
         trackBackgroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         trackBackgroundPaint.setStyle(Paint.Style.STROKE);
         trackBackgroundPaint.setStrokeWidth(trackWidth);
-        trackBackgroundPaint.setColor(Color.parseColor("#B3E5FC"));
+        trackBackgroundPaint.setColor(Color.parseColor("#EC407A"));
 
-        // 深色弧线（表示当前值）
+        // 进度弧线 - 深紫红色
         progressPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         progressPaint.setStyle(Paint.Style.STROKE);
         progressPaint.setStrokeWidth(trackWidth);
-        progressPaint.setColor(Color.parseColor("#F44336"));
+        progressPaint.setColor(Color.parseColor("#880E4F"));
         progressPaint.setStrokeCap(Paint.Cap.ROUND);
 
-        // 内圆 - 橙
+        // 内圆 - 亮橙黄色
         innerCirclePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         innerCirclePaint.setStyle(Paint.Style.FILL);
         innerCirclePaint.setColor(Color.parseColor("#FFB74D"));
 
-        // 长刻度
+        // 长刻度 - 深色
         longTickPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        longTickPaint.setColor(Color.parseColor("#283593"));
+        longTickPaint.setColor(Color.parseColor("#424242"));
         longTickPaint.setStrokeWidth(4f);
+        longTickPaint.setStrokeCap(Paint.Cap.ROUND);
 
-        // 短刻度
+        // 短刻度 - 中灰色
         shortTickPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        shortTickPaint.setColor(Color.parseColor("#5C6BC0"));
+        shortTickPaint.setColor(Color.parseColor("#757575"));
         shortTickPaint.setStrokeWidth(2f);
+        shortTickPaint.setStrokeCap(Paint.Cap.ROUND);
 
-        // 中心文字
+        // 中心文字 - 深紫色
         textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        textPaint.setColor(Color.parseColor("#1A237E"));
-        textPaint.setTextSize(72f);
+        textPaint.setColor(Color.parseColor("#4A148C"));
+        textPaint.setTextSize(80f);
         textPaint.setTextAlign(Paint.Align.CENTER);
         textPaint.setFakeBoldText(true);
 
+        outerRingBounds = new RectF();
         trackBounds = new RectF();
 
         // 双击归零
@@ -104,51 +110,92 @@ public class CircularSlider extends View {
     }
 
     @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        int widthSize = MeasureSpec.getSize(widthMeasureSpec);
+        int heightSize = MeasureSpec.getSize(heightMeasureSpec);
+
+        // 强制正方形（取较小值）
+        int size = Math.min(widthSize, heightSize);
+
+        // 计算0.25英寸的最小轨道半径
+        float density = getResources().getDisplayMetrics().density;
+        float minTrackRadiusPx = 0.25f * density * 160;
+
+        // 最小视图尺寸 = (轨道半径 + 轨道宽度/2 + 外环宽度 + 边距) × 2
+        float minViewSize = (minTrackRadiusPx + trackWidth / 2f + outerRingWidth + 20) * 2;
+
+        if (size < minViewSize) {
+            size = (int) Math.ceil(minViewSize);
+        }
+
+        if (size == 0) {
+            size = 300;
+        }
+
+        setMeasuredDimension(size, size);
+    }
+
+    @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+
         float cx = getWidth() / 2f;
         float cy = getHeight() / 2f;
-        float radius = Math.min(cx, cy);
+        float maxRadius = Math.min(cx, cy) - 8;
 
-        // 外圆半径最大
-        float outerRadius = radius - 10;
-        float trackRadius = outerRadius - 70;  // 中间轨道
-        float innerRadius = trackRadius - trackWidth / 2f - 35; // 内圆更小
+        // 三层结构 - 轨道延伸到内圆边缘
+        // 1. 最外层圆环
+        float outerRingRadius = maxRadius - outerRingWidth / 2f;
 
-        // 绘制外圆
-        canvas.drawCircle(cx, cy, outerRadius, outerCirclePaint);
+        // 2. 可滑动轨道（紧贴外环内侧）
+        float trackRadius = outerRingRadius - outerRingWidth / 2f - trackWidth / 2f;
 
-        // 绘制调节轨道背景
-        trackBounds.set(cx - trackRadius, cy - trackRadius, cx + trackRadius, cy + trackRadius);
+        // 3. 内圆（紧贴轨道内侧，无留白）
+        float innerRadius = trackRadius - trackWidth / 2f;
+
+        // ===== 绘制最外层灰色圆环 =====
+        outerRingBounds.set(
+                cx - outerRingRadius, cy - outerRingRadius,
+                cx + outerRingRadius, cy + outerRingRadius
+        );
+        canvas.drawArc(outerRingBounds, 0, 360, false, outerRingPaint);
+
+        // ===== 绘制可滑动轨道背景（粉红色）- 延伸到内圆 =====
+        trackBounds.set(
+                cx - trackRadius, cy - trackRadius,
+                cx + trackRadius, cy + trackRadius
+        );
         canvas.drawArc(trackBounds, 0, 360, false, trackBackgroundPaint);
 
-        // 绘制进度弧线
+        // ===== 绘制进度弧线（深紫红）- 延伸到内圆 =====
         float sweepAngle = (currentValue / 100f) * 360f;
         if (sweepAngle > 0) {
             canvas.drawArc(trackBounds, -90, sweepAngle, false, progressPaint);
         }
 
-        // 绘制刻度（1/16 圈）
+        // ===== 绘制刻度线（在轨道内部）=====
         for (int i = 0; i < 16; i++) {
             float angle = (float) Math.toRadians(i * 22.5f - 90);
             boolean isLong = (i % 2 == 0);
             Paint tickPaint = isLong ? longTickPaint : shortTickPaint;
 
-            float tickLength = isLong ? 25f : 15f;
-            float innerTickR = trackRadius - trackWidth / 2 - 5;
-            float outerTickR = innerTickR + tickLength;
+            // 刻度线在轨道内部，从外向内
+            float tickOuterRadius = trackRadius + trackWidth / 2f - 5;
+            float tickLength = isLong ? 35f : 20f;
+            float tickInnerRadius = tickOuterRadius - tickLength;
 
-            float x1 = cx + (float) Math.cos(angle) * innerTickR;
-            float y1 = cy + (float) Math.sin(angle) * innerTickR;
-            float x2 = cx + (float) Math.cos(angle) * outerTickR;
-            float y2 = cy + (float) Math.sin(angle) * outerTickR;
+            float x1 = cx + (float) Math.cos(angle) * tickOuterRadius;
+            float y1 = cy + (float) Math.sin(angle) * tickOuterRadius;
+            float x2 = cx + (float) Math.cos(angle) * tickInnerRadius;
+            float y2 = cy + (float) Math.sin(angle) * tickInnerRadius;
+
             canvas.drawLine(x1, y1, x2, y2, tickPaint);
         }
 
-        // 绘制内圆
+        // ===== 绘制内圆（橙黄色）- 紧贴轨道内侧 =====
         canvas.drawCircle(cx, cy, innerRadius, innerCirclePaint);
 
-        // 中心文字
+        // ===== 绘制中心文字 =====
         String text = String.format("%.0f%%", currentValue);
         Paint.FontMetrics fm = textPaint.getFontMetrics();
         float textY = cy - (fm.ascent + fm.descent) / 2;
@@ -212,7 +259,17 @@ public class CircularSlider extends View {
     }
 
     private OnValueChangeListener listener;
+
     public void setOnValueChangeListener(OnValueChangeListener listener) {
         this.listener = listener;
+    }
+
+    public float getValue() {
+        return currentValue;
+    }
+
+    public void setValue(float value) {
+        currentValue = Math.max(0, Math.min(100, value));
+        invalidate();
     }
 }

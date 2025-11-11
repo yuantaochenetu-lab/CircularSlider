@@ -1,12 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:gravity="center"
     android:background="#FFFFFF">
 
-    <!-- 顶部显示当前值 -->
+    <!-- 自定义圆形滑块 -->
+    <com.example.circularslider.CircularSlider
+        android:id="@+id/circularSlider"
+        android:layout_width="320dp"
+        android:layout_height="320dp"
+        android:layout_centerInParent="true" />
+
+    <!-- 标题显示在圆盘正上方 -->
     <TextView
         android:id="@+id/valueText"
         android:layout_width="wrap_content"
@@ -15,12 +20,8 @@
         android:textColor="#1A237E"
         android:textStyle="bold"
         android:textSize="24sp"
-        android:layout_marginBottom="20dp"/>
+        android:layout_above="@id/circularSlider"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="30dp"/>
 
-    <!-- 自定义圆形滑块 -->
-    <com.example.circularslider.CircularSlider
-        android:id="@+id/circularSlider"
-        android:layout_width="320dp"
-        android:layout_height="320dp" />
-
-</LinearLayout>
+</RelativeLayout>
