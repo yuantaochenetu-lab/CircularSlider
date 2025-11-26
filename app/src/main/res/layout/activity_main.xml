@@ -3,8 +3,25 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF">
+    android:background="#FFFFFF"
+    android:padding="16dp">
+    <!-- 增加 padding 确保内容不贴边 -->
 
+    <!-- Q.3.6-1: 状态显示 TextView -->
+    <TextView
+        android:id="@+id/statusText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="状态: 未连接"
+        android:textColor="#1A237E"
+        android:textStyle="normal"
+        android:textSize="14sp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"/>
+
+    <!-- CircularSlider (保持不变) -->
     <com.example.circularslider.CircularSlider
         android:id="@+id/circularSlider"
         android:layout_width="320dp"
@@ -20,6 +37,7 @@
         app:defaultValue="0"
         app:innerCircleRatio="0.10"/>
 
+    <!-- ValueText (显示数值) -->
     <TextView
         android:id="@+id/valueText"
         android:layout_width="wrap_content"

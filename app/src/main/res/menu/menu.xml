@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <!-- Q.3.1: 用于启动蓝牙连接流程的菜单项 -->
+    <item
+        android:id="@+id/menu_connect"
+        android:icon="@drawable/ic_menu_connect"
+        android:title="连接蓝牙"
+        app:showAsAction="always" />
+
+</menu>

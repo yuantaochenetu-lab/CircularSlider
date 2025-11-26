@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    android:minWidth="350dp"
+    android:minHeight="550dp"
+    tools:context=".BluetoothConnectActivity">
+
+    <!-- ↑↑↑ 关键修复：添加 android:minHeight="550dp"
+         强制对话框至少有 550dp 高，这样中间的 0dp RecyclerView 才有空间展开 -->
+
+    <!-- 顶部的 Toolbar -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar_connect"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:title="Oscilloscope"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <ProgressBar
+            android:id="@+id/progress_discovery"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginEnd="16dp"
+            android:visibility="gone"
+            style="?android:attr/progressBarStyleSmall" />
+
+    </androidx.appcompat.widget.Toolbar>
+
+    <!-- 已配对设备标题 -->
+    <TextView
+        android:id="@+id/title_paired_devices"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="#DDDDDD"
+        android:padding="8dp"
+        android:text="Appareils appairés"
+        android:textColor="@android:color/black"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/toolbar_connect"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <!-- 1. 已配对设备列表 -->
+    <!-- 使用 constrainedHeight 限制最大高度，防止已配对设备太多挤占空间 -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/list_paired_devices"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constrainedHeight="true"
+        app:layout_constraintHeight_max="150dp"
+        android:minHeight="50dp"
+        android:overScrollMode="never"
+        app:layout_constraintTop_toBottomOf="@id/title_paired_devices"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:background="@android:color/white"/>
+
+    <!-- 已发现设备标题 -->
+    <TextView
+        android:id="@+id/title_discovered_devices"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="#DDDDDD"
+        android:padding="8dp"
+        android:text="Appareils découverts"
+        android:textColor="@android:color/black"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/list_paired_devices"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <!-- 2. 已发现设备列表 -->
+    <!-- 这里保持 0dp，但因为根布局有了 minHeight，它现在会填充剩余的所有空间 -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/list_discovered_devices"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:overScrollMode="never"
+        app:layout_constraintTop_toBottomOf="@id/title_discovered_devices"
+        app:layout_constraintBottom_toTopOf="@id/btn_scan_devices"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:background="@android:color/white"/>
+
+    <!-- 扫描按钮 -->
+    <Button
+        android:id="@+id/btn_scan_devices"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="16dp"
+        android:text="启动搜索"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

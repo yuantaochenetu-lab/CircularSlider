@@ -1,9 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
+
+    <!-- Base application theme (您现有的主题) -->
     <style name="Theme.CircularSlider" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Primary brand color. -->
         <item name="colorPrimary">@color/purple_500</item>
         <item name="colorPrimaryDark">@color/purple_700</item>
         <item name="colorAccent">@color/teal_200</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowBackground">@android:color/white</item>
+    </style>
+
+    <!-- Q.3.2-3 修复：定义蓝牙连接活动的对话框样式 (DialogStyle) -->
+    <style name="DialogStyle" parent="Theme.AppCompat.Light.Dialog">
+        <!-- 关键属性：让 Activity 显示为浮动窗口 -->
+        <item name="android:windowIsFloating">true</item>
+
+        <!-- 关键属性：隐藏掉系统默认的 ActionBar，由我们布局中的 Toolbar 接管 -->
+        <item name="android:windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+
+        <!-- 确保颜色属性继承 -->
+        <item name="colorPrimary">@color/purple_500</item>
+        <item name="colorPrimaryDark">@color/purple_700</item>
+        <item name="colorAccent">@color/teal_200</item>
+
+        <!-- 【关键修复】：强制窗口宽度 -->
+        <!-- 这会强制对话框宽度至少为屏幕宽度的 90% -->
+        <item name="android:windowMinWidthMajor">90%</item>
+        <item name="android:windowMinWidthMinor">90%</item>
+
+        <!-- 可选：移除默认的对话框背景边框，让布局完全控制外观 -->
+        <!-- <item name="android:windowBackground">@android:color/transparent</item> -->
     </style>
 </resources>

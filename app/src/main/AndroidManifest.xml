@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.circularslider">   <!-- ✅ 必须添加包名 -->
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.example.circularslider">
+
+    <!-- 蓝牙权限 -->
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+    <uses-permission android:name="android.permission.BLUETOOTH_SCAN"
+        android:usesPermissionFlags="neverForLocation" />
+    <uses-permission android:name="android.permission.BLUETOOTH" android:maxSdkVersion="30" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" android:maxSdkVersion="30" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" android:maxSdkVersion="30" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" android:maxSdkVersion="30" />
 
     <application
         android:allowBackup="true"
@@ -13,7 +23,7 @@
         android:theme="@style/Theme.CircularSlider"
         android:exported="true">
 
-        <!-- 🚀 主启动 Activity -->
+        <!-- 主 Activity -->
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -23,6 +33,12 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+
+        <!-- 蓝牙连接 Activity (应用 DialogStyle) -->
+        <activity android:name=".BluetoothConnectActivity"
+            android:label="选择设备"
+            android:theme="@style/DialogStyle">
         </activity>
 
     </application>
